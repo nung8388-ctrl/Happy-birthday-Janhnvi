@@ -1,14 +1,17 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Happy Birthday Janhnvi ❤️</title>
+<title>Happy Birthday Janhnvi</title>
 
 <style>
 body{
 margin:0;
+padding:0;
 overflow:hidden;
 font-family:sans-serif;
+background:black;
 color:white;
 text-align:center;
 }
@@ -16,195 +19,180 @@ text-align:center;
 /* Background Video */
 video{
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-object-fit:cover;
-z-index:-2;
-}
-
-/* Dark overlay */
-.overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
+right:0;
+bottom:0;
+min-width:100%;
+min-height:100%;
 z-index:-1;
+filter:brightness(40%);
 }
 
-/* Glowing Name */
+/* Name Glow Animation */
 h1{
-margin-top:30px;
-font-size:45px;
+margin-top:40px;
+font-size:55px;
 animation:glow 2s infinite alternate;
 }
+
 @keyframes glow{
-from{text-shadow:0 0 10px pink;}
-to{text-shadow:0 0 35px gold;}
+from{ text-shadow:0 0 10px #ff4da6; }
+to{ text-shadow:0 0 40px #ff1493; }
 }
 
-/* Countdown */
-#countdown{
-font-size:22px;
-margin-top:10px;
-background:rgba(0,0,0,0.4);
-display:inline-block;
-padding:10px 20px;
-border-radius:20px;
+/* Counter Box */
+.counter{
+margin-top:20px;
+font-size:20px;
 }
 
-/* Cake */
-.cake{
-font-size:100px;
-margin-top:30px;
-position:relative;
-}
-
-.flame{
-position:absolute;
-font-size:25px;
-top:-30px;
-left:35px;
-animation:flicker 0.2s infinite alternate;
-}
-@keyframes flicker{
-from{opacity:1;}
-to{opacity:0.4;}
-}
-
+/* Button Style */
 button{
 padding:12px 25px;
-font-size:18px;
+margin:15px;
 border:none;
 border-radius:30px;
+font-size:16px;
 cursor:pointer;
-background:white;
-color:#ff1493;
-margin-top:20px;
+background:#ff1493;
+color:white;
+transition:0.3s;
 }
 
-#finalText{
-max-width:600px;
-margin:20px auto;
+button:hover{
+transform:scale(1.1);
+background:#ff69b4;
+}
+
+/* Message Box */
+#message{
+width:80%;
+margin:auto;
+margin-top:20px;
 font-size:18px;
 opacity:0;
-transition:1.5s;
+transition:1s;
 }
 
-canvas{
+/* Fireworks */
+.firework{
 position:fixed;
-top:0;
-left:0;
+width:5px;
+height:5px;
+background:yellow;
+border-radius:50%;
+animation:explode 1s ease-out forwards;
+}
+
+@keyframes explode{
+from{ transform:scale(1); opacity:1; }
+to{ transform:scale(25); opacity:0; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- Background Video -->
 <video autoplay muted loop>
 <source src="bg.mp4" type="video/mp4">
 </video>
 
-<div class="overlay"></div>
+<h1>Happy Birthday Janhnvi 🎉</h1>
 
-<h1>Happy Birthday Janhnvi 💖🎂</h1>
-
-<div id="countdown"></div>
-
-<div class="cake">
-🎂
-<div class="flame" id="flame">🔥</div>
+<div class="counter">
+<div id="totalTime"></div>
+<br>
+<div id="nextBirthday"></div>
 </div>
 
-<button onclick="blowCandle()">Blow Candle 💨</button>
+<button onclick="showMessage()">Tap for Message</button>
+<button onclick="fireworks()">Celebrate 🎆</button>
 
-<p id="finalText">
-10 March 2008, 4:00 AM ko ek angel is duniya me aayi thi 💖✨<br><br>
-10 March 2026 ko usse pure <b>6,574 din</b> ho jayenge...<br>
-6,574 din se duniya thodi aur beautiful hai 🌸<br><br>
-Janhnvi, tum meri life ka sabse khoobsurat ehsaas ho 🥰<br>
-Hamesha haste rehna Birthday Wala Babu 💕
-</p>
-
-<canvas id="fireworks"></canvas>
+<div id="message"></div>
 
 <script>
 
-// Countdown to 10 March 2026 4:00 AM
-let targetDate = new Date("March 10, 2026 04:00:00").getTime();
+/* Birth Date */
+let birth = new Date("March 10, 2008 04:00:00");
 
-setInterval(function(){
-let now = new Date().getTime();
-let distance = targetDate - now;
+/* Continuous Counter */
+function updateCounter(){
 
-let days = Math.floor(distance / (1000*60*60*24));
-let hours = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
-let minutes = Math.floor((distance % (1000*60*60))/(1000*60));
-let seconds = Math.floor((distance % (1000*60))/1000);
+let now = new Date();
 
-document.getElementById("countdown").innerHTML =
-"⏳ Countdown: "+days+"d "+hours+"h "
-+minutes+"m "+seconds+"s ";
-},1000);
+/* Total time since birth */
+let diff = now - birth;
 
-// Fireworks
-let canvas=document.getElementById("fireworks");
-let ctx=canvas.getContext("2d");
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+let totalDays = Math.floor(diff/(1000*60*60*24));
+let years = Math.floor(totalDays/365.25);
 
-let particles=[];
+document.getElementById("totalTime").innerHTML =
+"10 March 2008, 4:00 AM se ab tak:<br>" +
+totalDays + " din (" + years + " saal approx) ho chuke hain 🌸";
 
-function createFirework(x,y){
-for(let i=0;i<100;i++){
-particles.push({
-x:x,
-y:y,
-radius:2,
-color:"hsl("+Math.random()*360+",100%,50%)",
-speedX:(Math.random()-0.5)*6,
-speedY:(Math.random()-0.5)*6,
-life:100
-});
-}
+/* Next 10 March */
+let next = new Date(now.getFullYear(),2,10,4,0,0);
+if(now > next){
+next = new Date(now.getFullYear()+1,2,10,4,0,0);
 }
 
-function animate(){
-requestAnimationFrame(animate);
-ctx.clearRect(0,0,canvas.width,canvas.height);
+let remaining = next - now;
 
-particles.forEach((p,index)=>{
-ctx.beginPath();
-ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
-ctx.fillStyle=p.color;
-ctx.fill();
-p.x+=p.speedX;
-p.y+=p.speedY;
-p.life--;
-if(p.life<=0){
-particles.splice(index,1);
-}
-});
-}
-animate();
+let d = Math.floor(remaining/(1000*60*60*24));
+let h = Math.floor((remaining/(1000*60*60))%24);
+let m = Math.floor((remaining/(1000*60))%60);
+let s = Math.floor((remaining/1000)%60);
 
-function blowCandle(){
-document.getElementById("flame").style.display="none";
+document.getElementById("nextBirthday").innerHTML =
+"Next 10 March tak:<br>" +
+d+" din "+h+" ghante "+m+" minute "+s+" second ⏳";
 
-for(let i=0;i<5;i++){
-setTimeout(()=>{
-createFirework(
-Math.random()*canvas.width,
-Math.random()*canvas.height/2
-);
-},i*500);
 }
 
-document.getElementById("finalText").style.opacity="1";
+setInterval(updateCounter,1000);
+updateCounter();
+
+/* Message Typing */
+function showMessage(){
+
+let text=`10 March 2008 ko 4 baje subah ek special insaan ne entry maari 🌅
+
+Tab se duniya thodi aur interesting ho gayi 😄
+
+Janhnvi, tumhari smile simple hai
+par impact strong hai ✨
+
+Tum jo bhi karo,
+confidence ke sath karo —
+kyunki tum deserve karti ho best 🌸
+
+Hamesha khush raho,
+aur life me aage badhte raho 🎉`;
+
+let box=document.getElementById("message");
+box.style.opacity="1";
+box.innerHTML="";
+
+let i=0;
+function typing(){
+if(i<text.length){
+box.innerHTML+=text.charAt(i);
+i++;
+setTimeout(typing,35);
+}
+}
+typing();
+}
+
+/* Fireworks */
+function fireworks(){
+for(let i=0;i<30;i++){
+let fw=document.createElement("div");
+fw.className="firework";
+fw.style.left=Math.random()*window.innerWidth+"px";
+fw.style.top=Math.random()*window.innerHeight+"px";
+document.body.appendChild(fw);
+setTimeout(()=>{fw.remove();},1000);
+}
 }
 
 </script>
